@@ -8,7 +8,7 @@ format string attack
 
 - 用 gdb 建 checkpoint in program `b program`
 - 因漏洞的 stack 從 local esp 往上算, 且實際位置會動, 所以要算出 banana local var 的 pointer 的偏移量
-- 根據 https://www.cnblogs.com/clover-toeic/p/3755401.html stack 架構圖, 在 program 子程序中光 tmp[1024] 就佔 256 個 %x(1byte), 手算大概 26x 出頭的位置可以得到 banana 的 pointer, 可以先利用 gdb 直接印查出該測試用執行檔的 address, 再從 26x 開始試 `%N$p` 試到顯示該 address, 其為不會變的 stack 當下偏移量, 可以用此偏移量取得該次執行的該區域變數地址在此題為 269
+- 根據 https://www.cnblogs.com/clover-toeic/p/3755401.html stack 架構圖, 在 program 子程序中光 tmp[1024] 就佔 256 個 %x(1byte), 手算大概 26x 出頭的位置可以得到 banana 的 pointer, 可以先利用 gdb 直接印查出該測試用執行檔的 address, 再從 26x 開始試 `%N$p` 試到顯示該 address, 其為不會變的 stack 當下偏移量, 可以用此偏移量取得該次執行的該區域變數地址在此題為 269, gdb 在不同執行檔下地址會變, 所以要用偏移量看
 - 得知要更改的目標, 要有要變成的目標值, 利用 format string attack %n 語法即可改值
   edit target(example): 0xffffd084,
   target value: 0x3132000a
