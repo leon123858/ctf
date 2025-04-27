@@ -14,6 +14,6 @@
 
 ![alt text](image-1.png)
 
-最後嘗試 `http://localhost/img../` 會成功進入根目錄資料夾，找到檔案 flag 並獲取內容
+最後嘗試 `http://localhost/img../` 會成功進入根目錄資料夾，找到檔案 flag 並獲取內容 (這是 nginx alias 配置錯誤導致的)
 
 ![alt text](image-2.png)
