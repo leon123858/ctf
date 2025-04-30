@@ -1,0 +1,6 @@
+version: '3'
+services:
+  web:
+    image: registry.cn-beijing.aliyuncs.com/n1book/web-ssrf-1:latest
+    ports:
+      - '8233:80'
