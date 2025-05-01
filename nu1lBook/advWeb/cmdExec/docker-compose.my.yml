@@ -1,0 +1,35 @@
+version: '3.8'
+
+networks:
+  my-bridge-network:
+    driver: bridge
+
+services:
+  converter:
+    image: registry.cn-hangzhou.aliyuncs.com/n1book/web-command:latest
+    ports:
+      - 80:80
+    networks:
+      - my-bridge-network
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    user: zap
+    ports:
+      - '8080:8080'
+      - '8090:8090'
+    networks:
+      - my-bridge-network
+    depends_on:
+      - converter
+    command: zap-webswing.sh
+
+  nginx:
+    image: nginx:latest
+    container_name: static-server
+    volumes:
+      - ./ctf:/usr/share/nginx/html
+    ports:
+      - 9090:80
+    networks:
+      - my-bridge-network
