@@ -1,0 +1,23 @@
+version: '3.8'
+
+networks:
+  my-bridge-network:
+    driver: bridge
+
+services:
+  xss:
+    image: registry.cn-hangzhou.aliyuncs.com/n1book/web-xss:latest
+    ports:
+      - 3000:3000
+    networks:
+      - my-bridge-network
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    user: zap
+    ports:
+      - '8080:8080'
+      - '8090:8090'
+    networks:
+      - my-bridge-network
+    command: zap-webswing.sh
