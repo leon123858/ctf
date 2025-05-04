@@ -1,0 +1,22 @@
+version: '3'
+services:
+  file_upload_vuln:
+    image: moeinfatehi/file_upload_vulnerabilities
+    ports:
+      - '9001:80'
+    networks:
+      - my-bridge-network
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    user: zap
+    ports:
+      - '8080:8080'
+      - '8090:8090'
+    networks:
+      - my-bridge-network
+    command: zap-webswing.sh
+
+networks:
+  my-bridge-network:
+    driver: bridge
