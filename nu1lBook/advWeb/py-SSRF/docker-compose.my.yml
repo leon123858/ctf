@@ -1,0 +1,27 @@
+version: '3.8'
+
+networks:
+  my-bridge-network:
+    driver: bridge
+
+services:
+  ssrf-vuln:
+    image: registry.cn-hangzhou.aliyuncs.com/n1book/python-ssrf
+    container_name: ssrf-vuln
+    dns: 8.8.8.8
+    ports:
+      - '8000:8000'
+    networks:
+      - my-bridge-network
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    user: zap
+    ports:
+      - '8080:8080'
+      - '8090:8090'
+    networks:
+      - my-bridge-network
+    depends_on:
+      - ssrf-vuln
+    command: zap-webswing.sh
